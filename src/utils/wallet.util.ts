@@ -45,7 +45,7 @@ export function parseWallet(walletStr: string): WalletDto {
  * @returns WalletDto (address, privateKey, mnemonic)
  * @throws Nếu tạo ví thất bại
  */
-export function createWalletFromMnemonic(strength: number = 12): WalletDto {
+export function createRandomWalletFromMnemonic(strength: number = 12): WalletDto {
   const wallet = Wallet.createRandom();
 
   const mnemonic = wallet.mnemonic?.phrase || '';

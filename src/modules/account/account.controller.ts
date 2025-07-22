@@ -47,4 +47,12 @@ export class AccountController {
   remove(@Param('id') id: string) {
     return this.accountService.remove(id);
   }
+
+  @Post('import-twitter-accounts')
+  @ApiOperation({ summary: 'Nhập tài khoản Twitter từ file' })
+  @ApiBody({ type: String })
+  @ApiResponse({ status: 200, description: 'Tài khoản Twitter đã nhập' })
+  importTwitterAccounts(@Body() filePath: string) {
+    return this.accountService.importTwitterAccounts(filePath);
+  }
 } 

@@ -13,7 +13,10 @@ export class Account {
 
   @ApiProperty({ example: '0x123...' })
   @Column()
-  wallet: string;
+  walletAddress: string;
+
+  @Column('json', { nullable: true })
+  wallet?: Record<string, any>;
 
   @Column('json', { nullable: true })
   gmail?: Record<string, any>;

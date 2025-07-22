@@ -31,6 +31,23 @@ export class QuestController {
     return this.questService.create(data);
   }
 
+  @Post('bulk')
+  @ApiOperation({ summary: 'Tạo nhiều quest cùng lúc' })
+  @ApiBody({ schema: { example: { count: 3, quests: [ { accountId: '...', campaignName: '...', metadata: [], status: 'pending', message: '' } ] } } })
+  @ApiResponse({ status: 201, description: 'Các quest đã tạo', type: [Quest] })
+  async createBulk(@Body() body: { count: number, quests: Partial<Quest>[] }) {
+    // Nếu truyền count và 1 quest mẫu, nhân bản ra count quest
+    if (body.count && body.quests && body.quests.length === 1) {
+      const quests = Array.from({ length: body.count }, () => ({ ...body.quests[0] }));
+      return this.questService.createBulk(quests);
+    }
+    // Nếu truyền mảng quests cụ thể
+    if (body.quests && Array.isArray(body.quests)) {
+      return this.questService.createBulk(body.quests);
+    }
+    return [];
+  }
+
   @Put(':id')
   @ApiOperation({ summary: 'Cập nhật quest' })
   @ApiParam({ name: 'id', type: String })

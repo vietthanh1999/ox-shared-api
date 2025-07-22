@@ -30,4 +30,9 @@ export class QuestService {
   remove(id: string) {
     return this.questRepository.delete(id);
   }
+
+  async createBulk(quests: Partial<Quest>[]) {
+    const entities = this.questRepository.create(quests);
+    return this.questRepository.save(entities);
+  }
 } 

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, IsNull, DataSource } from 'typeorm';
 import { Quest } from './quest.entity';
 
 @Injectable()
@@ -8,6 +8,7 @@ export class QuestService {
   constructor(
     @InjectRepository(Quest)
     private readonly questRepository: Repository<Quest>,
+    private readonly dataSource: DataSource,
   ) {}
 
   findAll() {
@@ -34,5 +35,25 @@ export class QuestService {
   async createBulk(quests: Partial<Quest>[]) {
     const entities = this.questRepository.create(quests);
     return this.questRepository.save(entities);
+  }
+
+  async assignQuestToPC(pcId: string) {
+    return this.dataSource.transaction(async manager => {
+      // Lấy quest đầu tiên chưa ai nhận, lock hàng này
+      const quest = await manager
+        .getRepository(Quest)
+        .createQueryBuilder('quest')
+        .setLock('pessimistic_write')
+        .where('quest.status = :status', { status: 'pending' })
+        .andWhere('quest.pc IS NULL')
+        .getOne();
+
+      if (!quest) return null;
+
+      quest.status = 'running';
+      quest.pc = pcId;
+      await manager.save(quest);
+      return quest;
+    });
   }
 } 

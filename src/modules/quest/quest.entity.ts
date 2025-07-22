@@ -37,4 +37,7 @@ export class Quest {
   @ApiProperty({ example: 'Error message', required: false })
   @Column({ nullable: true })
   message: string;
+
+  @Column({ nullable: true })
+  pc?: string;
 } 

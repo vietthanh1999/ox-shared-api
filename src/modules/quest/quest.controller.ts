@@ -48,6 +48,14 @@ export class QuestController {
     return [];
   }
 
+  @Post('assign')
+  @ApiOperation({ summary: 'PC lấy quest để xử lý (không trùng giữa các PC)' })
+  @ApiBody({ schema: { example: { pcId: 'PC-01' } } })
+  @ApiResponse({ status: 200, description: 'Quest được gán cho PC', type: Quest })
+  async assignQuest(@Body() body: { pcId: string }) {
+    return this.questService.assignQuestToPC(body.pcId);
+  }
+
   @Put(':id')
   @ApiOperation({ summary: 'Cập nhật quest' })
   @ApiParam({ name: 'id', type: String })
